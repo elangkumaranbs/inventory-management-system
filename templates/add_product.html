@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block title %}Add Product - Inventory Management System{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <h1 class="page-title">
+        <i class="bi bi-plus-circle"></i>
+        Add New Product
+    </h1>
+    <div>
+        <a href="{{ url_for('main.products') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Back to Products
+        </a>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-body p-4">
+                <form method="POST" class="needs-validation" novalidate>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="product_id" name="product_id" 
+                                       placeholder="Product ID" required pattern="[A-Za-z0-9_-]+">
+                                <label for="product_id">
+                                    <i class="bi bi-hash me-2"></i>Product ID <span class="text-danger">*</span>
+                                </label>
+                                <div class="form-text">
+                                    <i class="bi bi-info-circle me-1"></i>Use format like: LAPTOP001, MOUSE001
+                                </div>
+                                <div class="invalid-feedback">
+                                    Please provide a valid product ID.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="name" name="name" 
+                                       placeholder="Product Name" required>
+                                <label for="name">
+                                    <i class="bi bi-tag me-2"></i>Product Name <span class="text-danger">*</span>
+                                </label>
+                                <div class="invalid-feedback">
+                                    Please provide a product name.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <textarea class="form-control" id="description" name="description" 
+                                          placeholder="Product Description" style="height: 120px"></textarea>
+                                <label for="description">
+                                    <i class="bi bi-file-text me-2"></i>Description (Optional)
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="number" class="form-control" id="initial_qty" name="initial_qty" 
+                                       placeholder="Initial Quantity" min="0" value="0" required>
+                                <label for="initial_qty">
+                                    <i class="bi bi-boxes me-2"></i>Initial Quantity <span class="text-danger">*</span>
+                                </label>
+                                <div class="form-text">
+                                    <i class="bi bi-info-circle me-1"></i>Starting stock quantity for this product
+                                </div>
+                                <div class="invalid-feedback">
+                                    Please provide a valid quantity (0 or more).
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="d-flex justify-content-end gap-3">
+                        <a href="{{ url_for('main.products') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x me-2"></i>Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-2"></i>Save Product
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tips Section -->
+<div class="row mt-4">
+    <div class="col-lg-8 mx-auto">
+        <div class="card bg-light border-0">
+            <div class="card-body">
+                <h6 class="fw-bold mb-3">
+                    <i class="bi bi-lightbulb text-warning me-2"></i>Tips for Adding Products
+                </h6>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-start">
+                            <i class="bi bi-check-circle text-success me-2 mt-1"></i>
+                            <small>Use consistent naming convention for Product IDs</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-start">
+                            <i class="bi bi-check-circle text-success me-2 mt-1"></i>
+                            <small>Include key details in product names</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-start">
+                            <i class="bi bi-check-circle text-success me-2 mt-1"></i>
+                            <small>Add detailed descriptions for better tracking</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-start">
+                            <i class="bi bi-check-circle text-success me-2 mt-1"></i>
+                            <small>Avoid spaces and special characters in IDs</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Form validation
+(function() {
+    'use strict';
+    
+    const form = document.querySelector('.needs-validation');
+    
+    form.addEventListener('submit', function(event) {
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        
+        form.classList.add('was-validated');
+    }, false);
+    
+    // Real-time validation feedback
+    const inputs = form.querySelectorAll('input, textarea');
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            if (this.checkValidity()) {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+            } else {
+                this.classList.remove('is-valid');
+                this.classList.add('is-invalid');
+            }
+        });
+    });
+})();
+
+// Auto-format Product ID
+document.getElementById('product_id').addEventListener('input', function(e) {
+    let value = e.target.value.toUpperCase().replace(/[^A-Z0-9_-]/g, '');
+    e.target.value = value;
+});
+</script>
+{% endblock %}

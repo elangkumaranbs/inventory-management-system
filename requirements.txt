@@ -1,0 +1,13 @@
+# Core Flask dependencies
+Flask==3.0.0
+Flask-SQLAlchemy==3.1.1
+
+# Production WSGI server
+gunicorn==21.2.0
+
+# Environment configuration
+python-dotenv==1.0.0
+
+
+# Security
+Werkzeug==3.0.1

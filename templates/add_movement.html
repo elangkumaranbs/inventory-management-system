@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Add Movement - Inventory Management System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-plus-circle"></i> Add New Product Movement</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="product_id" class="form-label">Product <span class="text-danger">*</span></label>
+                            <select class="form-select" id="product_id" name="product_id" required>
+                                <option value="">Select a product</option>
+                                {% for product in products %}
+                                    <option value="{{ product.product_id }}">{{ product.name }} ({{ product.product_id }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="qty" class="form-label">Quantity <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="qty" name="qty" required min="1"
+                                   placeholder="Enter quantity">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="from_location" class="form-label">From Location</label>
+                            <select class="form-select" id="from_location" name="from_location">
+                                <option value="">Leave empty to allocate unallocated stock</option>
+                                {% for location in locations %}
+                                    <option value="{{ location.location_id }}">{{ location.name }} ({{ location.location_id }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="to_location" class="form-label">To Location</label>
+                            <select class="form-select" id="to_location" name="to_location">
+                                <option value="">Leave empty to remove stock from system</option>
+                                {% for location in locations %}
+                                    <option value="{{ location.location_id }}">{{ location.name }} ({{ location.location_id }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="notes" class="form-label">Notes</label>
+                        <textarea class="form-control" id="notes" name="notes" rows="3"
+                                  placeholder="Enter additional notes about this movement (optional)"></textarea>
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-warning">
+                            <i class="bi bi-check"></i> Save Movement
+                        </button>
+                        <a href="{{ url_for('main.movements') }}" class="btn btn-secondary">
+                            <i class="bi bi-x"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-10 offset-md-1">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card bg-success bg-opacity-10 border-success">
+                    <div class="card-body text-center">
+                        <div class="text-success mb-2">
+                            <i class="bi bi-arrow-down-circle display-6"></i>
+                        </div>
+                        <h6 class="text-success">Stock In</h6>
+                        <p class="small mb-0">Leave "From Location" empty to record incoming stock</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card bg-info bg-opacity-10 border-info">
+                    <div class="card-body text-center">
+                        <div class="text-info mb-2">
+                            <i class="bi bi-arrow-left-right display-6"></i>
+                        </div>
+                        <h6 class="text-info">Transfer</h6>
+                        <p class="small mb-0">Select both locations to transfer stock between them</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card bg-danger bg-opacity-10 border-danger">
+                    <div class="card-body text-center">
+                        <div class="text-danger mb-2">
+                            <i class="bi bi-arrow-up-circle display-6"></i>
+                        </div>
+                        <h6 class="text-danger">Stock Out</h6>
+                        <p class="small mb-0">Leave "To Location" empty to record outgoing stock</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

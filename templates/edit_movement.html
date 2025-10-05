@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Movement - Inventory Management System{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <h1 class="page-title">
+        <i class="bi bi-pencil-square"></i>
+        Edit Movement #{{ movement.movement_id }}
+    </h1>
+    <div>
+        <a href="{{ url_for('main.movements') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Back to Movements
+        </a>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <!-- Current Movement Info -->
+        <div class="card border-info mb-4">
+            <div class="card-header bg-info text-white">
+                <h6 class="mb-0">
+                    <i class="bi bi-info-circle me-2"></i>Current Movement Details
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="mb-2"><strong>Movement ID:</strong> #{{ movement.movement_id }}</p>
+                        <p class="mb-2"><strong>Created:</strong> {{ movement.timestamp.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                        <p class="mb-2"><strong>Current Product:</strong> 
+                            {% for product in products %}
+                                {% if product.product_id == movement.product_id %}
+                                    {{ product.name }} ({{ product.product_id }})
+                                {% endif %}
+                            {% endfor %}
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-2"><strong>Current Quantity:</strong> 
+                            <span class="badge bg-primary fs-6">{{ movement.qty }} units</span>
+                        </p>
+                        <p class="mb-2"><strong>Movement Type:</strong> 
+                            {% if movement.movement_type == 'Stock In' %}
+                                <span class="badge bg-success">{{ movement.movement_type }}</span>
+                            {% elif movement.movement_type == 'Stock Out' %}
+                                <span class="badge bg-danger">{{ movement.movement_type }}</span>
+                            {% else %}
+                                <span class="badge bg-info">{{ movement.movement_type }}</span>
+                            {% endif %}
+                        </p>
+                        <p class="mb-0"><strong>Current Stock Level:</strong>
+                            {% for product in products %}
+                                {% if product.product_id == movement.product_id %}
+                                    <span class="badge {% if product.total_qty <= 10 %}bg-warning{% elif product.total_qty <= 0 %}bg-danger{% else %}bg-success{% endif %} fs-6">
+                                        {{ product.total_qty }} units
+                                    </span>
+                                {% endif %}
+                            {% endfor %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Form -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-pencil me-2"></i>Update Movement Details
+                </h5>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" class="needs-validation" novalidate id="editMovementForm">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <select class="form-select" id="product_id" name="product_id" required>
+                                    {% for product in products %}
+                                        <option value="{{ product.product_id }}" 
+                                                data-stock="{{ product.total_qty }}"
+                                                {% if product.product_id == movement.product_id %}selected{% endif %}>
+                                            {{ product.name }} ({{ product.product_id }}) - {{ product.total_qty }} units
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                <label for="product_id">
+                                    <i class="bi bi-box me-2"></i>Product <span class="text-danger">*</span>
+                                </label>
+                                <div class="invalid-feedback">
+                                    Please select a product.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="number" class="form-control" id="qty" name="qty" 
+                                       required min="1" value="{{ movement.qty }}" 
+                                       placeholder="Quantity">
+                                <label for="qty">
+                                    <i class="bi bi-123 me-2"></i>Quantity <span class="text-danger">*</span>
+                                </label>
+                                <div class="form-text" id="stockInfo">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    <span id="stockText">Select a product to see stock information</span>
+                                </div>
+                                <div class="invalid-feedback">
+                                    Please provide a valid quantity.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-4 mt-2">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <select class="form-select" id="from_location" name="from_location">
+                                    <option value="">No source location (Stock In)</option>
+                                    {% for location in locations %}
+                                        <option value="{{ location.location_id }}" 
+                                                {% if location.location_id == movement.from_location %}selected{% endif %}>
+                                            {{ location.name }} ({{ location.location_id }})
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                <label for="from_location">
+                                    <i class="bi bi-arrow-up-circle me-2"></i>From Location
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <select class="form-select" id="to_location" name="to_location">
+                                    <option value="">No destination location (Stock Out)</option>
+                                    {% for location in locations %}
+                                        <option value="{{ location.location_id }}" 
+                                                {% if location.location_id == movement.to_location %}selected{% endif %}>
+                                            {{ location.name }} ({{ location.location_id }})
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                <label for="to_location">
+                                    <i class="bi bi-arrow-down-circle me-2"></i>To Location
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <div class="form-floating">
+                            <textarea class="form-control" id="notes" name="notes" 
+                                      style="height: 100px" placeholder="Notes">{{ movement.notes or '' }}</textarea>
+                            <label for="notes">
+                                <i class="bi bi-chat-text me-2"></i>Notes (Optional)
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="d-flex justify-content-end gap-3">
+                        <a href="{{ url_for('main.movements') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x me-2"></i>Cancel
+                        </a>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="bi bi-check-circle me-2"></i>Update Movement
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const productSelect = document.getElementById('product_id');
+    const qtyInput = document.getElementById('qty');
+    const stockInfo = document.getElementById('stockText');
+    const fromLocation = document.getElementById('from_location');
+    const toLocation = document.getElementById('to_location');
+
+    function updateStockInfo() {
+        const selectedOption = productSelect.options[productSelect.selectedIndex];
+        const currentStock = selectedOption.getAttribute('data-stock');
+        const isStockOut = !toLocation.value && fromLocation.value;
+        const isStockIn = toLocation.value && !fromLocation.value;
+        
+        if (currentStock !== null) {
+            let stockText = `Current stock: ${currentStock} units`;
+            
+            if (isStockOut) {
+                stockText += ` | Available for removal: ${currentStock} units`;
+                qtyInput.max = currentStock;
+            } else if (isStockIn) {
+                stockText += ` | Adding new stock`;
+                qtyInput.removeAttribute('max');
+            } else {
+                stockText += ` | Transfer between locations`;
+                qtyInput.removeAttribute('max');
+            }
+            
+            stockInfo.textContent = stockText;
+        }
+    }
+
+    productSelect.addEventListener('change', updateStockInfo);
+    fromLocation.addEventListener('change', updateStockInfo);
+    toLocation.addEventListener('change', updateStockInfo);
+    
+    // Initial call
+    updateStockInfo();
+
+    // Form validation
+    const form = document.getElementById('editMovementForm');
+    form.addEventListener('submit', function(event) {
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Locations - Inventory Management System{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <h1 class="page-title">
+        <i class="bi bi-geo-alt"></i>
+        Locations Management
+    </h1>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('main.add_location') }}" class="btn btn-success">
+            <i class="bi bi-plus-circle me-2"></i>Add New Location
+        </a>
+    </div>
+</div>
+
+{% if locations %}
+<div class="card border-0 shadow-sm">
+    <div class="card-header">
+        <h5 class="mb-0">Location List</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Location ID</th>
+                        <th>Name</th>
+                        <th>Address</th>
+                        <th width="200">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for location in locations %}
+                    <tr>
+                        <td><strong>{{ location.location_id }}</strong></td>
+                        <td>{{ location.name }}</td>
+                        <td>{{ location.address or '-' }}</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a href="{{ url_for('main.edit_location', location_id=location.location_id) }}" 
+                                   class="btn btn-sm btn-outline-primary" title="Edit">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-danger" 
+                                        onclick="confirmDelete('{{ location.location_id }}', '{{ location.name }}')" title="Delete">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="text-center py-5">
+    <div class="display-1 text-muted mb-3">
+        <i class="bi bi-geo-alt"></i>
+    </div>
+    <h4>No Locations Found</h4>
+    <p class="text-muted">Get started by adding your first location to the inventory system.</p>
+    <a href="{{ url_for('main.add_location') }}" class="btn btn-success">
+        <i class="bi bi-plus"></i> Add First Location
+    </a>
+</div>
+{% endif %}
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the location <strong id="locationName"></strong>?</p>
+                <p class="text-danger small"><i class="bi bi-exclamation-triangle"></i> This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function confirmDelete(locationId, locationName) {
+    document.getElementById('locationName').textContent = locationName;
+    document.getElementById('deleteForm').action = '{{ url_for("main.delete_location", location_id="PLACEHOLDER") }}'.replace('PLACEHOLDER', locationId);
+    
+    const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    modal.show();
+}
+</script>
+{% endblock %}

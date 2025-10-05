@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Add Location - Inventory Management System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-plus-circle"></i> Add New Location</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="location_id" class="form-label">Location ID <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="location_id" name="location_id" required
+                               placeholder="e.g., WH001, STORE001">
+                        <div class="form-text">Enter a unique identifier for the location</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Location Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="name" name="name" required
+                               placeholder="e.g., Main Warehouse, Downtown Store">
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="address" class="form-label">Address</label>
+                        <textarea class="form-control" id="address" name="address" rows="3"
+                                  placeholder="Enter full address (optional)"></textarea>
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check"></i> Save Location
+                        </button>
+                        <a href="{{ url_for('main.locations') }}" class="btn btn-secondary">
+                            <i class="bi bi-x"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-8 offset-md-2">
+        <div class="card bg-light border-0">
+            <div class="card-body">
+                <h6><i class="bi bi-info-circle"></i> Tips for Adding Locations</h6>
+                <ul class="mb-0 small">
+                    <li>Use clear, descriptive names for easy identification</li>
+                    <li>Follow a consistent ID naming convention (e.g., WH001, STORE001)</li>
+                    <li>Include complete addresses for accurate record keeping</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

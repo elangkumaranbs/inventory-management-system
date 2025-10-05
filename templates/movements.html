@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+
+{% block title %}Movements - Inventory Management System{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <h1 class="page-title">
+        <i class="bi bi-arrow-left-right"></i>
+        Product Movements
+    </h1>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('main.add_movement') }}" class="btn btn-warning text-white">
+            <i class="bi bi-plus-circle me-2"></i>Add New Movement
+        </a>
+        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#clearAllModal">
+            <i class="bi bi-trash3 me-2"></i>Clear All
+        </button>
+    </div>
+</div>
+
+{% if movements.items %}
+<div class="card border-0 shadow-sm">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Movement History</h5>
+        <small class="text-muted">
+            Showing {{ movements.items|length }} of {{ movements.total }} movements
+        </small>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Movement ID</th>
+                        <th>Date/Time</th>
+                        <th>Product</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Quantity</th>
+                        <th>Type</th>
+                        <th>Notes</th>
+                        <th width="150">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for movement in movements.items %}
+                    <tr>
+                        <td><strong>#{{ movement.movement_id }}</strong></td>
+                        <td>
+                            <div>{{ movement.timestamp.strftime('%m/%d/%Y') }}</div>
+                            <small class="text-muted">{{ movement.timestamp.strftime('%I:%M %p') }}</small>
+                        </td>
+                        <td>
+                            <div><strong>{{ movement.product.name }}</strong></div>
+                            <small class="text-muted">{{ movement.product_id }}</small>
+                        </td>
+                        <td>
+                            {% if movement.from_location %}
+                                <div>{{ movement.from_loc.name }}</div>
+                                <small class="text-muted">{{ movement.from_location }}</small>
+                            {% else %}
+                                <span class="text-muted">—</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if movement.to_location %}
+                                <div>{{ movement.to_loc.name }}</div>
+                                <small class="text-muted">{{ movement.to_location }}</small>
+                            {% else %}
+                                <span class="text-muted">—</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            <div class="d-flex flex-column align-items-center">
+                                <span class="badge bg-primary fs-6 mb-1">{{ movement.qty }} units</span>
+                                <small class="text-muted">Current: {{ movement.product.total_qty }} units</small>
+                            </div>
+                        </td>
+                        <td>
+                            {% if movement.movement_type == 'Stock In' %}
+                                <span class="badge bg-success">{{ movement.movement_type }}</span>
+                            {% elif movement.movement_type == 'Stock Out' %}
+                                <span class="badge bg-danger">{{ movement.movement_type }}</span>
+                            {% else %}
+                                <span class="badge bg-info">{{ movement.movement_type }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if movement.notes %}
+                                <span title="{{ movement.notes }}">
+                                    {{ movement.notes[:30] }}{% if movement.notes|length > 30 %}...{% endif %}
+                                </span>
+                            {% else %}
+                                <span class="text-muted">—</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a href="{{ url_for('main.edit_movement', movement_id=movement.movement_id) }}" 
+                                   class="btn btn-sm btn-outline-primary" title="Edit Movement & Update Quantity">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-danger" 
+                                        onclick="confirmDelete({{ movement.movement_id }})" title="Delete">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Pagination -->
+    {% if movements.pages > 1 %}
+    <div class="card-footer">
+        <nav aria-label="Movement pagination">
+            <ul class="pagination pagination-sm justify-content-center mb-0">
+                {% if movements.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('main.movements', page=movements.prev_num) }}">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+                {% endif %}
+                
+                {% for page_num in movements.iter_pages() %}
+                    {% if page_num %}
+                        {% if page_num != movements.page %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('main.movements', page=page_num) }}">{{ page_num }}</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ page_num }}</span>
+                            </li>
+                        {% endif %}
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">…</span>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if movements.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('main.movements', page=movements.next_num) }}">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+</div>
+{% else %}
+<div class="text-center py-5">
+    <div class="display-1 text-muted mb-3">
+        <i class="bi bi-arrow-left-right"></i>
+    </div>
+    <h4>No Movements Found</h4>
+    <p class="text-muted">Start tracking inventory by recording your first product movement.</p>
+    <a href="{{ url_for('main.add_movement') }}" class="btn btn-warning">
+        <i class="bi bi-plus"></i> Add First Movement
+    </a>
+</div>
+{% endif %}
+
+<!-- Clear All Confirmation Modal -->
+<div class="modal fade" id="clearAllModal" tabindex="-1" aria-labelledby="clearAllModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="clearAllModalLabel">
+                    <i class="bi bi-trash3 text-danger"></i> Clear All Movements
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Warning:</strong> You are about to delete ALL movement records!</p>
+                <p class="text-danger">
+                    <i class="bi bi-exclamation-triangle-fill"></i> 
+                    This will:
+                </p>
+                <ul class="text-danger">
+                    <li>Delete all movement history</li>
+                    <li>Reset all product stock quantities</li>
+                    <li>Cannot be undone</li>
+                </ul>
+                <p>Are you sure you want to continue?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form method="POST" action="{{ url_for('main.clear_all_movements') }}" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash3"></i> Clear All Movements
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this movement record?</p>
+                <p class="text-danger small"><i class="bi bi-exclamation-triangle"></i> This action cannot be undone and will affect inventory calculations.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function confirmDelete(movementId) {
+    document.getElementById('deleteForm').action = '/movements/delete/' + movementId;
+    
+    const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    modal.show();
+}
+</script>
+{% endblock %}

@@ -1,0 +1,6 @@
+<!-- Simple SVG favicon for the inventory system -->
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="6" fill="#667eea"/>
+  <path d="M8 12h16v12H8V12zm2 2v8h12v-8H10zm2 2h8v4h-8v-4z" fill="white"/>
+  <path d="M10 6h12v4H10V6z" fill="white" opacity="0.8"/>
+</svg>
