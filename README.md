@@ -66,7 +66,7 @@ A comprehensive Flask-based inventory management system for tracking products, l
 
 ## 📱 Application Screens
 
-> **Note**: Screenshots will be added to the `/screenshots` folder to showcase the application interface. To add screenshots, run the application and capture images of each screen, then place them in the `screenshots` directory and update this README to reference them.
+> **Note**: Screenshots are included below to showcase the application interface. All screenshots are stored in the `/screenshots` folder.
 
 ### Dashboard
 The main dashboard provides an overview of your inventory system with key statistics:
@@ -75,7 +75,7 @@ The main dashboard provides an overview of your inventory system with key statis
 - Total inventory movements
 - Count of items currently in stock
 
-<!-- Screenshot placeholder: ![Dashboard](screenshots/dashboard.png) -->
+![Dashboard](screenshots/dashboardpng.png)
 
 ### Products Management
 - **Add Products**: Create new products with unique IDs, names, and descriptions
@@ -83,11 +83,7 @@ The main dashboard provides an overview of your inventory system with key statis
 - **Delete Products**: Remove products (with safety checks for existing movements)
 - **View All Products**: List all products with current stock levels
 
-<!-- Screenshot placeholders:
-![Products List](screenshots/products.png)
-![Add Product](screenshots/add-product.png)
-![Edit Product](screenshots/edit-product.png)
--->
+![Products Management](screenshots/products.png)
 
 ### Locations Management
 - **Add Locations**: Create new storage locations and warehouses
@@ -95,11 +91,7 @@ The main dashboard provides an overview of your inventory system with key statis
 - **Delete Locations**: Remove locations (with safety checks)
 - **View All Locations**: List all storage locations
 
-<!-- Screenshot placeholders:
-![Locations List](screenshots/locations.png)
-![Add Location](screenshots/add-location.png)
-![Edit Location](screenshots/edit-location.png)
--->
+![Locations Management](screenshots/locations.png)
 
 ### Movements Management
 - **Add Movements**: Record inventory movements between locations
@@ -108,18 +100,14 @@ The main dashboard provides an overview of your inventory system with key statis
 - **Movement History**: Complete audit trail of all inventory transactions
 - **Clear All Movements**: Bulk delete option with confirmation
 
-<!-- Screenshot placeholders:
-![Movements List](screenshots/movements.png)
-![Add Movement](screenshots/add-movement.png)
-![Edit Movement](screenshots/edit-movement.png)
--->
+![Movements Management](screenshots/movements.png)
 
 ### Reports
 - **Inventory Distribution**: Visual charts showing product distribution across locations
 - **Stock Levels**: Current stock levels for all products
 - **Location Summary**: Inventory summary by location
 
-<!-- Screenshot placeholder: ![Reports](screenshots/reports.png) -->
+![Reports](screenshots/reports.png)
 
 ## 🗄️ Database Schema
 
