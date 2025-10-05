@@ -36,6 +36,8 @@ venv.bak/
 *.sqlite
 *.sqlite3
 instance/
+# Allow the inventory database file
+!instance/inventory.db
 
 # IDE
 .vscode/
